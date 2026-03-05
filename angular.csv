@@ -1,0 +1,45 @@
+﻿Azure サービス一覧（政府システム移行プロジェクト）,,,,,
+,,,,,
+No.,Azure サービス名,料金目安/月,機能・用途,必要性,備考
+🖥️ コンピューティング (Compute),,,,,
+1,Virtual Machines (VM),$60 (B2ms),Windows Server 仮想マシン。IIS、API、OCR を実行,必須*,*VM+IIS方式の場合
+2,App Service,$55 (B1),.NET 8 Web API のマネージドホスティング,必須*,*PaaS方式の場合
+3,Static Web Apps,$0-9,Angular フロントエンドの静的ファイルホスティング,必須*,*PaaS方式の場合。Private EP は Standard 必要
+4,Azure Functions,$0-10,サーバーレス関数。定時タスク（SQL Agent 代替）,推奨*,*PaaS方式で SQL Agent 代替に使用
+🌐 ネットワーク (Networking),,,,,
+5,Virtual Network (VNet),$0,プライベートネットワーク。全リソースを VNet 内に配置,必須,アドレス空間: 10.0.0.0/16
+6,Subnet,$0,サブネット分割。Web/DB/その他を分離,必須,最低 2-3 サブネット
+7,Network Security Group (NSG),$0,ファイアウォールルール。ポート・IP制限,必須,各サブネットに 1つずつ
+8,VPN Gateway,$27 (Basic),オフィス ↔ Azure 間の VPN トンネル,必須,内部システムのアクセス経路
+9,Private Endpoint,$7/個,PaaS サービスに VNet 内プライベート IP を付与,必須*,"*PaaS方式で必要（3個: SWA, AppSvc, SQL）"
+10,Private DNS Zone,$0.50,VNet 内の DNS 解析。Private Endpoint と連携,必須*,*Private Endpoint 使用時に必要
+11,Azure Bastion,$140,パブリック IP 不要のセキュアなリモートアクセス,推奨,VM管理用。必要時のみ起動でコスト削減可
+12,Network Watcher,$0,ネットワーク診断ツール。Flow Logs、接続テスト,推奨,各リージョンに自動作成される
+13,ExpressRoute,$55+,専用線接続（VPNの高性能代替）,任意,高帯域・低遅延が必要な場合のみ
+🔐 セキュリティ (Security),,,,,
+14,Key Vault,$1,秘密情報の集中管理（接続文字列、JWT キー、証明書）,必須,.NET 8 からネイティブ参照可能
+15,Microsoft Entra ID,$0-6/ユーザー,"ID管理・認証（旧 Azure AD）。SSO, MFA",推奨,OIDC 認証方式の場合に使用
+16,Disk Encryption,$0,VM ディスク暗号化（SSE + PMK/CMK）,必須,政府セキュリティ要件で通常必須
+17,Microsoft Defender for Cloud,$0-15,セキュリティ評価・脆弱性スキャン,推奨,無料プランでも基本スキャン可能
+18,Azure Policy,$0,ガバナンスポリシー強制（暗号化必須等）,推奨,組織ルールの自動適用
+19,RBAC,$0,ロールベースアクセス制御。Azure リソース管理権限,必須,管理者/開発者/閲覧者の権限分離
+📦 ストレージ (Storage),,,,,
+20,Blob Storage,$5 (50GB Hot),オブジェクトストレージ。ファイル、バックアップ格納,必須,OCR ファイル、DB バックアップ用
+21,Storage Account,$0,ストレージの管理コンテナ（Blob の親リソース）,必須,Blob Storage 作成時に自動作成
+22,ライフサイクル管理,$0,データの自動アーカイブ（Hot → Cool → Archive）,推奨,古いファイルを自動的に低コスト層へ移動
+23,Azure Files,$5+,SMB ファイル共有（ネットワークドライブ）,任意,共有フォルダが必要な場合のみ
+📊 監視 & ログ (Monitoring),,,,,
+24,Azure Monitor,$0,VM / App Service の CPU、メモリ、ディスク監視,必須,基本メトリクスは無料
+25,Application Insights,$0-10,APM（アプリケーション性能監視）、リクエスト追跡,推奨,Serilog → SQL ログで代替可能
+26,Log Analytics Workspace,$2-5,ログの集中収集と KQL クエリ検索,推奨,VM 方式の場合にシステムログ収集
+27,Alert Rules,$0.10/ルール,閾値超過時のメール/SMS アラート通知,推奨,CPU > 90%、API エラー急増等
+💾 バックアップ & DR (Backup & Disaster Recovery),,,,,
+28,Azure Backup,$10/VM,VM の定期バックアップ（ポイントインタイム復元）,必須*,*VM方式の場合。PaaS方式は自動バックアップ
+29,Recovery Services Vault,$0,バックアップポリシーと復元ポイントの管理,必須*,*Azure Backup と共に作成
+30,Azure Site Recovery,$25/VM,災害復旧。別リージョンへのVM レプリケーション,任意,政府要件でDR必須の場合に検討
+🔧 DevOps & 管理 (DevOps & Management),,,,,
+31,Azure DevOps,$0 (5人以下),Git リポジトリ、CI/CD パイプライン、ボード管理,推奨,6人以上は $6/ユーザー/月
+32,Resource Group,$0,リソースの論理グループ。一括管理・削除,必須,プロジェクト単位で作成
+33,Azure Cost Management,$0,費用監視、予算アラート設定,推奨,月額予算超過時に通知
+34,Activity Log,$0,操作監査ログ（誰が何を変更したか）,必須,セキュリティ監査で必須
+35,Tags,$0,リソースタグ付け（環境、プロジェクト、担当者）,推奨,費用分類と管理に使用
